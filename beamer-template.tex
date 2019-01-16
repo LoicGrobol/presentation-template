@@ -1,0 +1,262 @@
+% Copyright © 2019, Loïc Grobol <loic.grobol@gmail.com>
+% This document is available under the terms of the Creative Commons Attribution 4.0 International License (CC BY 4.0) (https://creativecommons.org/licenses/by/4.0/)
+
+\RequirePackage{xparse}
+\RequirePackage{shellesc}
+% Settings
+\NewDocumentCommand\myname{}{Loïc Grobol}
+\NewDocumentCommand\mylab{}{}
+\NewDocumentCommand\pdftitle{}{}
+\NewDocumentCommand\mymail{}{loic.grobol@gmail.com}
+\NewDocumentCommand\titlepagetitle{}{\pdftitle}
+\NewDocumentCommand\conference{}{A very interesting conference}
+\NewDocumentCommand\confplace{}{Ankh-Morpork}
+\NewDocumentCommand\confdate{}{2019-01-16}
+
+
+\documentclass[hyperref={unicode}, xcolor={svgnames}, french]{beamer}
+% Colour palette from [Paul Tol's technical note](https://personal.sron.nl/~pault/data/colourschemes.pdf) v3.1
+% Bright scheme
+\definecolor{sronbrighttblue}{RGB}{68, 119, 170}
+\definecolor{sronbrightcyan}{RGB}{102, 204, 238}
+\definecolor{sronbrightgreen}{RGB}{34, 136, 51}
+\definecolor{sronbrightyellow}{RGB}{204, 187, 68}
+\definecolor{sronbrightred}{RGB}{238, 102, 119}
+\definecolor{sronbrightpurple}{RGB}{170, 51, 119}
+\definecolor{sronbrightgrey}{RGB}{187, 187, 187}
+
+
+\usetheme[
+	sectionpage=progressbar,
+	progressbar=frametitle,
+]{metropolis}
+	\colorlet{accent}{sronbrightgreen}
+	\setbeamercolor{frametitle}{bg=DarkSlateGrey}
+	\setbeamercolor{alerted text}{fg=accent}
+	\makeatletter
+		\setlength{\metropolis@progressinheadfoot@linewidth}{2pt}
+	\makeatother
+	% Avoid ugly whitespace below figures
+	\makeatletter
+		\renewenvironment{figure}[1][]{%
+		\def\@captype{figure}%
+		\par\centering}%
+		{\par}
+	\makeatother
+	% FIXME: not pretty and footnotes are still too big
+	\let\footnoterule\relax  % No footnote rule, push down footnote
+
+% Use non-standard fonts
+\usefonttheme{professionalfonts}
+\setsansfont[BoldFont={* Semibold}]{FiraGO}
+\setmonofont[Scale=0.9]{Fira Mono}
+\newfontfamily\fallbackfont{Deja Vu Sans}
+\frenchspacing
+
+% Fix missing glyphs in Fira by delegating to polyglossia/babel
+\usepackage{newunicodechar}
+\newunicodechar{ }{~}   % U+202F NARROW NO-BREAK SPACE
+\newunicodechar{ }{ }   % U+2009 THIN SPACE
+
+% Notes on left screen
+% \usepackage{pgfpages}
+% \setbeameroption{show notes on second screen=left}
+
+
+\usepackage[main=english, french]{babel}
+
+\usepackage{amsfonts,amssymb}
+\usepackage{amsmath,amsthm}
+\usepackage{mathtools}	% AMS Maths service pack
+	\newtagform{brackets}{[}{]}	% Pour des lignes d'équation numérotées entre crochets
+	\mathtoolsset{showonlyrefs, showmanualtags, mathic}	% affiche les tags manuels (\tag et \tag*) et corrige le kerning des maths inline dans un bloc italique voir la doc de mathtools
+	\usetagform{brackets}	% Utilise le style de tags défini plus haut
+\usepackage{lualatex-math}
+
+\usepackage[math-style=french]{unicode-math}
+	\setmathfont{Libertinus Math}
+\usepackage{newunicodechar}
+	\newunicodechar{√}{\sqrt}
+\usepackage{mleftright}
+
+
+\usepackage{tabu}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{multicol}
+\usepackage{ccicons}
+\usepackage{bookmark}
+\usepackage{caption}
+	\captionsetup{skip=1ex, labelformat=empty}
+
+\usepackage{csquotes}
+\usepackage{tikz}
+	\NewDocumentCommand{\textnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep=0pt]{\node[#1] (#2) {#3};}}
+	\NewDocumentCommand{\mathnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep=0pt]{\node[#1] (#2) {$\displaystyle #3$};}}
+	% Beamer utilities
+	\tikzset{
+		alt/.code args={<#1>#2#3}{%
+		  \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+		},
+		invisible/.style={opacity=0},
+		visible on/.style={alt={<#1>{}{invisible}}},
+		accent on/.style={alt={<#1>{draw=accent, text=accent, thick}{draw}}},
+		highlight/.style={color=highlight#1},
+	}
+
+	% Misc utilities
+	\tikzset{
+		true scale/.style={scale=#1, every node/.style={transform shape}},
+	}
+	\usepackage{forest}
+	\usepackage{tkz-graph}
+	\usepackage[beamer, markings]{hf-tikz}
+
+	\usetikzlibrary{tikzmark}
+	\usetikzlibrary{matrix}
+	\usetikzlibrary{shapes, shapes.geometric}
+	\usetikzlibrary{decorations.pathreplacing}
+	\usetikzlibrary{positioning, calc, intersections}
+	\usetikzlibrary{fit}
+
+	% TikZ externalisation
+	\usetikzlibrary{external}
+	% Create the `tikzpics/` folder if it does not exist
+	\ShellEscape{mkdir tikzpics}
+	% Only externalise pictures on demand (to avoid messing up with metropolis theme)
+	\tikzset{
+		external/export=false,
+		external/prefix=tikzpics/,
+	}
+	\tikzexternalize
+
+
+\usepackage[
+	style=authoryear,
+	block=ragged,
+	doi=false,
+	isbn=false,
+	maxbibnames=6,
+	minbibnames=1,
+	maxcitenames=2,
+	mincitenames=1,
+]{biblatex}
+	\AtEveryBibitem{
+		\ifentrytype{online}
+		{} {
+			\iffieldequalstr{howpublished}{online}
+			{
+				\clearfield{howpublished}
+			} {
+				\clearfield{urlyear}\clearfield{urlmonth}\clearfield{urlday}
+			}
+		}
+	}
+
+	% \addbibresource{biblio.bib}
+
+% Compact bibliography style
+\setbeamertemplate{bibliography item}[text]
+
+\AtEveryBibitem{
+	\clearfield{series}
+	\clearfield{pages}
+	\clearlist{publisher}
+	\clearname{editor}
+	\clearlist{location}
+}
+\renewcommand*{\bibfont}{\tiny}
+
+\usepackage{hyperxmp}	% XMP metadata
+
+\usepackage[type={CC},modifier={by},version={4.0}]{doclicense}
+
+\usepackage{todonotes}
+\let\todox\todo
+\renewcommand\todo[1]{\todox[inline]{#1}}
+
+\title{\titlepagetitle}
+\author{\myname}
+\institute{\mylab}
+\date{\conference\\\confplace, \confdate}
+
+\titlegraphic{\ccby}
+
+% Tikz styles
+% Global
+\tikzset{
+	>=stealth,
+	hair lines/.style={line width = 0.05pt, lightgray},
+	accent on/.style={alt={<#1>{draw=accent, text=accent, thick}{draw}}},
+	true scale/.style={scale=#1, every node/.style={transform shape}},
+}
+
+% Commands spécifiques
+\NewDocumentCommand\shorturl{ O{https} O{://} m }{%
+	\href{#1#2#3}{\nolinkurl{#3}}%
+}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\DeclarePairedDelimiterX\compset[2]{\lbrace}{\rbrace}{#1\,\delimsize|\,#2}
+\DeclarePairedDelimiterX\innprod[2]{\langle}{\rangle}{#1\,\delimsize|\,#2}
+
+% Easy column vectors \vcord{a,b,c} ou \vcord[;]{a;b;c}
+% Here be black magic
+\ExplSyntaxOn
+	\NewDocumentCommand{\vcord}{O{,}m}{\vector_main:nnnn{p}{\\}{#1}{#2}}
+	\NewDocumentCommand{\tvcord}{O{,}m}{\vector_main:nnnn{psmall}{\\}{#1}{#2}}
+	\seq_new:N\l__vector_arg_seq
+	\cs_new_protected:Npn\vector_main:nnnn #1 #2 #3 #4{
+		\seq_set_split:Nnn\l__vector_arg_seq{#3}{#4}
+		\begin{#1matrix}
+			\seq_use:Nnnn\l__vector_arg_seq{#2}{#2}{#2}
+		\end{#1matrix}
+	}
+\ExplSyntaxOff
+
+
+% ██████   ██████   ██████ ██    ██ ███    ███ ███████ ███    ██ ████████
+% ██   ██ ██    ██ ██      ██    ██ ████  ████ ██      ████   ██    ██
+% ██   ██ ██    ██ ██      ██    ██ ██ ████ ██ █████   ██ ██  ██    ██
+% ██   ██ ██    ██ ██      ██    ██ ██  ██  ██ ██      ██  ██ ██    ██
+% ██████   ██████   ██████  ██████  ██      ██ ███████ ██   ████    ██
+
+
+\begin{document}
+\pdfbookmark[2]{Title}{title}
+
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+
+\begin{frame}{In One Slide}
+	\pdfbookmark[2]{In One Slide}{inoneslide}
+	What to take away
+\end{frame}
+
+%  █████  ██████  ██████  ███████ ███    ██ ██████  ██ ██   ██
+% ██   ██ ██   ██ ██   ██ ██      ████   ██ ██   ██ ██  ██ ██
+% ███████ ██████  ██████  █████   ██ ██  ██ ██   ██ ██   ███
+% ██   ██ ██      ██      ██      ██  ██ ██ ██   ██ ██  ██ ██
+% ██   ██ ██      ██      ███████ ██   ████ ██████  ██ ██   ██
+
+\appendix
+\section{Annexes}
+
+\pdfbookmark[2]{Licence}{licence}
+\begin{frame}{Licence}
+	\begin{center}
+		{\huge \ccby}
+		\vfill
+		This document is distributed under the terms of the Creative Commons Attribution 4.0 International License (CC BY 4.0) (\shorturl{creativecommons.org/licenses/by/4.0})
+
+		\vfill
+		© 2019, Loïc Grobol <\shorturl[mailto][:]{loic.grobol@gmail.com}>
+
+		\shorturl[http]{lattice.cnrs.fr/Grobol-Loic}
+	\end{center}
+\end{frame}
+
+\end{document}
