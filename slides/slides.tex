@@ -72,6 +72,7 @@
 	\newtagform{brackets}{[}{]}	% Pour des lignes d'équation numérotées entre crochets
 	\mathtoolsset{showonlyrefs, showmanualtags, mathic}	% affiche les tags manuels (\tag et \tag*) et corrige le kerning des maths inline dans un bloc italique voir la doc de mathtools
 	\usetagform{brackets}	% Utilise le style de tags défini plus haut
+\usepackage{mismath}
 \usepackage{lualatex-math}
 
 \usepackage[math-style=french]{unicode-math}
@@ -198,8 +199,6 @@
 	\href{#1#2#3}{\nolinkurl{#3}}%
 }
 
-\DeclarePairedDelimiter\norm{\lVert}{\rVert}
-\DeclarePairedDelimiter\abs{\lvert}{\rvert}
 \DeclarePairedDelimiterX\compset[2]{\lbrace}{\rbrace}{#1\,\delimsize|\,#2}
 \DeclarePairedDelimiterX\innprod[2]{\langle}{\rangle}{#1\,\delimsize|\,#2}
 
