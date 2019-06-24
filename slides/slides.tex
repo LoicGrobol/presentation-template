@@ -249,16 +249,19 @@
 % ██   ██ ██      ██      ██      ██  ██ ██ ██   ██ ██  ██ ██
 % ██   ██ ██      ██      ███████ ██   ████ ██████  ██ ██   ██
 
+\hypersetup{bookmarksdepth=0}  % Don't create the bookmark for the Appendix part
 \appendix
+\hypersetup{bookmarksdepth=2}
+\bookmarksetup{startatroot}
 \section{Appendices}
 
-% \pdfbookmark[2]{References}{references}
+% \pdfbookmark[3]{References}{references}
 % \begin{frame}[allowframebreaks]{References}
 % 	\printbibliography[heading=none]
 % \end{frame}
 
-\pdfbookmark[2]{Licence}{licence}
-\begin{frame}{Licence}
+\pdfbookmark[3]{License}{license}
+\begin{frame}{License}
 	\begin{center}
 		{\huge \ccby}
 		\vfill
