@@ -32,7 +32,11 @@
 	progressbar=frametitle,
 ]{metropolis}
 	\colorlet{accent}{sronbrightgreen}
-	\setbeamercolor{frametitle}{bg=DarkSlateGrey}
+	\setbeamercolor{frametitle}{
+		use=normal text,
+		bg=normal text.bg,
+		fg=accent,
+	}
 	\setbeamercolor{alerted text}{fg=accent}
 	\makeatletter
 		\setlength{\metropolis@progressinheadfoot@linewidth}{2pt}
