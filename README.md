@@ -6,7 +6,7 @@ My presentation template, with all my quirks included.
 
 Build with
 
-```bash
+```console
 latexmk -lualatex -file-line-error -cd -interaction=nonstopmode -halt-on-error -shell-escape slides/slides.tex
 ```
 
@@ -17,7 +17,7 @@ latexmk -lualatex -file-line-error -cd -interaction=nonstopmode -halt-on-error -
 
 ## License <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png"/></a>
 
-Copyright © 2019 Loïc Grobol [\<loic.grobol@gmail.com\>](mailto:loic.grobol@gmail.com)
+Copyright © 2019 Loïc Grobol [<loic.grobol@gmail.com>](mailto:loic.grobol@gmail.com)
 
 Unless explicitely signaled otherwise, all the files in this repository are distributed under the terms of the [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) license.
 

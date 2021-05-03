@@ -1,21 +1,21 @@
-%!TeX engine = lualatex
+% LTeX: language=fr
 % Copyright © 2019, Loïc Grobol <loic.grobol@gmail.com>
 % This document is available under the terms of the Creative Commons Attribution 4.0 International License (CC BY 4.0) (https://creativecommons.org/licenses/by/4.0/)
 
 \RequirePackage{xparse}
 \RequirePackage{shellesc}
 % Settings
-\NewDocumentCommand\myname{}{Loïc Grobol}
-\NewDocumentCommand\mylab{}{}
-\NewDocumentCommand\pdftitle{}{}
-\NewDocumentCommand\mymail{}{loic.grobol@gmail.com}
-\NewDocumentCommand\titlepagetitle{}{\pdftitle}
-\NewDocumentCommand\conference{}{A very interesting conference}
-\NewDocumentCommand\confplace{}{Ankh-Morpork}
-\NewDocumentCommand\confdate{}{2019-01-16}
+\newcommand\myname{Loïc Grobol}
+\newcommand\mylab{Cool young academics}
+\newcommand\pdftitle{My very nice slides template}
+\newcommand\mymail{loic.grobol@ens.psl.eu}
+\newcommand\titlepagetitle{\pdftitle}
+\newcommand\eventname{A very interesting conference}
+\newcommand\eventvenue{Ankh-Morpork}
+\newcommand\eventdate{2020-07-15}
 
 
-\documentclass[hyperref={unicode}, xcolor={svgnames}, french]{beamer}
+\documentclass[hyperref={unicode}, xcolor={svgnames}, aspectratio=169, french]{beamer}
 % Colour palette from [Paul Tol's technical note](https://personal.sron.nl/~pault/data/colourschemes.pdf) v3.1
 % Bright scheme
 \definecolor{sronbrightblue}{RGB}{68, 119, 170}
@@ -26,12 +26,14 @@
 \definecolor{sronbrightpurple}{RGB}{170, 51, 119}
 \definecolor{sronbrightgrey}{RGB}{187, 187, 187}
 
+\definecolor{sronmutedindigo}{RGB}{51,34,136}
+
 
 \usetheme[
 	sectionpage=progressbar,
 	progressbar=frametitle,
 ]{metropolis}
-	\colorlet{accent}{sronbrightgreen}
+	\colorlet{accent}{sronmutedindigo}
 	\setbeamercolor{frametitle}{
 		use=normal text,
 		bg=normal text.bg,
@@ -41,34 +43,39 @@
 	\makeatletter
 		\setlength{\metropolis@progressinheadfoot@linewidth}{0.5pt}
 	\makeatother
-	% Avoid ugly whitespace below figures
-	\makeatletter
-		\renewenvironment{figure}[1][]{%
-		\def\@captype{figure}%
-		\par\centering}%
-		{\par}
-	\makeatother
-	% FIXME: not pretty and footnotes are still too big
-	\let\footnoterule\relax  % No footnote rule, push down footnote
 
 % Use non-standard fonts
+\usepackage{fontspec}
 \usefonttheme{professionalfonts}
-\setsansfont[BoldFont={* Semibold}]{FiraGO}
+
+\directlua{
+	luaotfload.add_fallback(
+		"emojifallback",
+		{"NotoColorEmoji:mode=harf;"}
+	)
+}
+
+\setsansfont{Fira Sans}[
+	BoldFont={* Semibold},
+	RawFeature={fallback=emojifallback},
+]
 \setmonofont[Scale=0.9]{Fira Mono}
 \newfontfamily\fallbackfont{Deja Vu Sans}
+\newfontfamily\emojifont{Noto Color Emoji}[Renderer=HarfBuzz]
 \frenchspacing
 
 % Fix missing glyphs in Fira by delegating to polyglossia/babel
 \usepackage{newunicodechar}
-\newunicodechar{ }{~}   % U+202F NARROW NO-BREAK SPACE
-\newunicodechar{ }{ }   % U+2009 THIN SPACE
+	\newunicodechar{ }{~}   % U+202F NARROW NO-BREAK SPACE
+	\newunicodechar{ }{ }   % U+2009 THIN SPACE
 
 % Notes on left screen
 % \usepackage{pgfpages}
 % \setbeameroption{show notes on second screen=left}
 
-
-\usepackage[main=english, french]{babel}
+\usepackage{polyglossia}
+	\setmainlanguage{french}
+	\setotherlanguage[variant=british]{english}
 
 \usepackage{amsfonts,amssymb}
 \usepackage{amsmath,amsthm}
@@ -76,7 +83,6 @@
 	\newtagform{brackets}{[}{]}	% Pour des lignes d'équation numérotées entre crochets
 	\mathtoolsset{showonlyrefs, showmanualtags, mathic}	% affiche les tags manuels (\tag et \tag*) et corrige le kerning des maths inline dans un bloc italique voir la doc de mathtools
 	\usetagform{brackets}	% Utilise le style de tags défini plus haut
-\usepackage{mismath}
 \usepackage{lualatex-math}
 
 \usepackage[math-style=french]{unicode-math}
@@ -85,21 +91,42 @@
 	\newunicodechar{√}{\sqrt}
 \usepackage{mleftright}
 
+\usepackage{mismath}
 
-\usepackage{tabu}
+\usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{siunitx}
-	\sisetup{detect-weight}
+	\sisetup{
+		binary-units=true,
+		detect-all,
+		detect-inline-weight=math,
+		group-separator=\text{\,},
+	}
+	\DeclareSIUnit{\quantity}{\relax}
+	\DeclareSIUnit{\words}{words}
+	\DeclareSIUnit{\sentences}{sentences}
+	% Needed for italics and bold numbers in siunitx S-aligned columns
+	\robustify\itshape
+	\robustify\bfseries
 \usepackage{multicol}
 \usepackage{ccicons}
 \usepackage{bookmark}
 \usepackage{caption}
 	\captionsetup{skip=1ex, labelformat=empty}
+\usepackage{lua-ul}
 
-\usepackage{csquotes}
+\usepackage[
+    english=american,
+    french=guillemets,
+    autostyle=true,
+]{csquotes}
+    \renewcommand{\mkbegdispquote}[2]{\itshape\let\emph\textbf}
+    % Like `\foreignquote` but use the outside language's quotes not the inside's
+	\NewDocumentCommand\quoteforeign{m m}{\enquote{\textlang{#1}{#2}}}
+
 \usepackage{tikz}
 	\NewDocumentCommand{\textnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep=0pt]{\node[#1] (#2) {#3};}}
-	\NewDocumentCommand{\mathnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep=0pt]{\node[#1] (#2) {$\displaystyle #3$};}}
+	\NewDocumentCommand{\mathnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep=0pt]{\node[#1] (#2) {\(\displaystyle #3\)};}}
 	% Beamer utilities
 	\tikzset{
 		alt/.code args={<#1>#2#3}{%
@@ -115,12 +142,11 @@
 	\tikzset{
 		true scale/.style={scale=#1, every node/.style={transform shape}},
 	}
-	\usepackage{forest}
 	\usepackage{tkz-graph}
 	\usepackage[beamer, markings]{hf-tikz}
 
 	\usetikzlibrary{tikzmark}
-	\usetikzlibrary{matrix}
+	\usetikzlibrary{matrix, chains}
 	\usetikzlibrary{shapes, shapes.geometric}
 	\usetikzlibrary{decorations.pathreplacing}
 	\usetikzlibrary{positioning, calc, intersections}
@@ -136,6 +162,11 @@
 		external/prefix=tikzpics/,
 	}
 	\tikzexternalize
+
+\usepackage{forest}
+	\useforestlibrary{linguistics}
+
+\usepackage{tikz-dependency}
 
 
 \usepackage[
@@ -168,9 +199,7 @@
 \AtEveryBibitem{
 	\clearfield{series}
 	\clearfield{pages}
-	\clearlist{publisher}
 	\clearname{editor}
-	\clearlist{location}
 }
 \renewcommand*{\bibfont}{\tiny}
 
@@ -183,9 +212,9 @@
 \renewcommand\todo[1]{\todox[inline]{#1}}
 
 \title{\titlepagetitle}
-\author{\myname}
-\institute{\mylab}
-\date{\conference\\\confplace, \confdate}
+\author{\myname~(\mylab)}
+\institute{}
+\date{\eventname\\\eventvenue, \eventdate}
 
 \titlegraphic{\ccby}
 
@@ -208,7 +237,7 @@
 
 % Easy column vectors \vcord{a,b,c} ou \vcord[;]{a;b;c}
 % Here be black magic
-\ExplSyntaxOn
+\ExplSyntaxOn % chktex 1
 	\NewDocumentCommand{\vcord}{O{,}m}{\vector_main:nnnn{p}{\\}{#1}{#2}}
 	\NewDocumentCommand{\tvcord}{O{,}m}{\vector_main:nnnn{psmall}{\\}{#1}{#2}}
 	\seq_new:N\l__vector_arg_seq
@@ -218,7 +247,18 @@
 			\seq_use:Nnnn\l__vector_arg_seq{#2}{#2}{#2}
 		\end{#1matrix}
 	}
-\ExplSyntaxOff
+\ExplSyntaxOff % chktex 1
+
+% Rectangles around things
+\NewDocumentCommand\hightlightikz{D<>{1-} O{accent} O{} m}{%
+	\alt<#1>{%
+		\tikz[baseline]{
+			\node[alt=<{#2}>{#3}, inner sep=3pt, anchor=text, rectangle, rounded corners=1mm, draw=#2] {#4};
+		}%
+	}{%
+		#4%
+	}%
+}
 
 \NewDocumentCommand\itpause{}{%
 	\addtocounter{beamerpauses}{-1}%
