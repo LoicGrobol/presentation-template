@@ -15,7 +15,12 @@
 \newcommand\eventdate{2020-07-15}
 
 
-\documentclass[hyperref={unicode}, xcolor={svgnames}, aspectratio=169, french]{beamer}
+\documentclass[
+	hyperref={unicode},
+	xcolor={svgnames},
+	aspectratio=169,
+	french,
+]{beamer}
 % Colour palette from [Paul Tol's technical note](https://personal.sron.nl/~pault/data/colourschemes.pdf) v3.1
 % Bright scheme
 \definecolor{sronbrightblue}{RGB}{68, 119, 170}
@@ -28,9 +33,13 @@
 
 \definecolor{sronmutedindigo}{RGB}{51,34,136}
 
+% And my favourite purple
+\definecolor{myfavouritepurple}{RGB}{113, 10, 186}
+
 
 \usetheme[
 	sectionpage=progressbar,
+	subsectionpage=progressbar,
 	progressbar=frametitle,
 ]{metropolis}
 	\colorlet{accent}{sronmutedindigo}
@@ -43,6 +52,10 @@
 	\makeatletter
 		\setlength{\metropolis@progressinheadfoot@linewidth}{0.5pt}
 	\makeatother
+
+% Left-align description lists
+\defbeamertemplate{description item}{align left}{\insertdescriptionitem\hfill}
+\setbeamertemplate{description item}[align left]
 
 % Use non-standard fonts
 \usepackage{fontspec}
@@ -97,9 +110,7 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 	\sisetup{
-		binary-units=true,
 		detect-all,
-		detect-inline-weight=math,
 		group-separator=\text{\,},
 	}
 	\DeclareSIUnit{\quantity}{\relax}
@@ -116,13 +127,13 @@
 \usepackage{lua-ul}
 
 \usepackage[
-    english=american,
-    french=guillemets,
-    autostyle=true,
+	english=american,
+	french=guillemets,
+	autostyle=true,
 ]{csquotes}
-    \renewcommand{\mkbegdispquote}[2]{\itshape\let\emph\textbf}
-    % Like `\foreignquote` but use the outside language's quotes not the inside's
-	\NewDocumentCommand\quoteforeign{m m}{\enquote{\textlang{#1}{#2}}}
+	\renewcommand{\mkbegdispquote}[2]{\itshape\let\emph\textbf}
+	% Like `\foreignquote` but use the outside language's quotes not the inside's
+	\NewDocumentCommand\quoteforeign{m m}{\enquote{\textlang{#1}{\textit{#2}}}}
 
 \usepackage{tikz}
 	\NewDocumentCommand{\textnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep=0pt]{\node[#1] (#2) {#3};}}
@@ -135,7 +146,6 @@
 		invisible/.style={opacity=0},
 		visible on/.style={alt={<#1>{}{invisible}}},
 		accent on/.style={alt={<#1>{draw=accent, text=accent, thick}{draw}}},
-		highlight/.style={color=highlight#1},
 	}
 
 	% Misc utilities
@@ -146,7 +156,7 @@
 	\usepackage[beamer, markings]{hf-tikz}
 
 	\usetikzlibrary{tikzmark}
-	\usetikzlibrary{matrix, chains}
+	\usetikzlibrary{matrix, chains, graphs, graphdrawing}
 	\usetikzlibrary{shapes, shapes.geometric}
 	\usetikzlibrary{decorations.pathreplacing}
 	\usetikzlibrary{positioning, calc, intersections}
@@ -168,7 +178,6 @@
 
 \usepackage{tikz-dependency}
 
-
 \usepackage[
 	style=authoryear,
 	block=ragged,
@@ -178,7 +187,10 @@
 	minbibnames=1,
 	maxcitenames=2,
 	mincitenames=1,
+	uniquelist=false,
 ]{biblatex}
+	% No small caps in french bib
+	\DefineBibliographyExtras{french}{\restorecommand\mkbibnamefamily}
 	\AtEveryBibitem{
 		\ifentrytype{online}
 		{} {
@@ -190,9 +202,10 @@
 			}
 		}
 	}
-
-	% \addbibresource{biblio.bib}
-
+	% Fix bug with \insertbiblabel in author-date, see https://tex.stackexchange.com/questions/585635/beamer-biblatex-authoryear-causes-problem-with-insertbiblabel and https://github.com/josephwright/beamer/blob/865a19d4ec64f4c8e4935c19e162b8f4fd5aa190/base/beamerbaselocalstructure.sty#L501
+	\let\insertbiblabel\relax
+	\addbibresource{biblio.bib}
+ 
 % Compact bibliography style
 \setbeamertemplate{bibliography item}[text]
 
